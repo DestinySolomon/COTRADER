@@ -1,0 +1,16 @@
+﻿# Laravel
+backend/vendor/
+backend/node_modules/
+backend/.env
+backend/storage/
+backend/public/hot
+backend/public/storage
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+
+# General
+.DS_Store
+*.log
