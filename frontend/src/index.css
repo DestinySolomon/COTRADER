@@ -1,111 +1,298 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+/* ============================================================
+   CO-TRADER — Global Styles
+   ============================================================ */
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
+/* ============================================================
+   shadcn/ui CSS variables — mapped to Co-Trader dark theme
+   ============================================================ */
+@layer base {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+    --background:          220 13% 6%;    /* #0A0A0B */
+    --foreground:          210 40% 98%;   /* #F9FAFB */
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
+    --card:                220 14% 10%;   /* #111318 */
+    --card-foreground:     210 40% 98%;
 
-body {
-  margin: 0;
-}
+    --popover:             220 14% 12%;   /* #161920 */
+    --popover-foreground:  210 40% 98%;
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
+    --primary:             168 100% 41%;  /* #00D4AA teal */
+    --primary-foreground:  220 13% 6%;
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
+    --secondary:           220 14% 12%;
+    --secondary-foreground:210 40% 98%;
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+    --muted:               220 14% 16%;
+    --muted-foreground:    215 16% 47%;   /* #6B7280 */
+
+    --accent:              220 14% 16%;
+    --accent-foreground:   210 40% 98%;
+
+    --destructive:         0 84% 60%;     /* #EF4444 */
+    --destructive-foreground: 210 40% 98%;
+
+    --border:              220 15% 15%;   /* #1E2330 */
+    --input:               220 15% 15%;
+    --ring:                168 100% 41%;
+
+    --radius: 0.75rem;                    /* 12px — rounded-xl */
   }
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+
+/* ============================================================
+   Base resets and body defaults
+   ============================================================ */
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing:  antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior:         smooth;
+  }
+
+  body {
+    @apply bg-ct-bg text-ct-text font-sans;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* All number-like elements use monospace */
+  .font-mono,
+  [data-number],
+  .price,
+  .pnl,
+  .balance {
+    font-family: "JetBrains Mono", "IBM Plex Mono", monospace;
+  }
+
+  /* Scrollbar styling — dark and minimal */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0A0A0B;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1E2330;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2A3040;
+  }
+
+  /* Focus ring — teal, not the default blue */
+  :focus-visible {
+    outline: 2px solid #00D4AA;
+    outline-offset: 2px;
+  }
+
+  /* Remove default button/input styles */
+  button {
+    cursor: pointer;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 }
-p {
-  margin: 0;
+
+/* ============================================================
+   Component utilities
+   ============================================================ */
+@layer components {
+
+  /* ---- Cards ---- */
+  .ct-card {
+    @apply bg-ct-surface border border-ct-border rounded-xl;
+  }
+
+  .ct-card-elevated {
+    @apply bg-ct-surface2 border border-ct-border rounded-xl;
+  }
+
+  /* ---- Skeleton shimmer ---- */
+  .ct-skeleton {
+    @apply rounded-md;
+    background: linear-gradient(
+      90deg,
+      #111318 25%,
+      #1E2330 50%,
+      #111318 75%
+    );
+    background-size: 400% 100%;
+    animation: shimmer 1.8s linear infinite;
+  }
+
+  /* ---- Number colors ---- */
+  .ct-profit {
+    @apply text-ct-profit font-mono;
+  }
+
+  .ct-loss {
+    @apply text-ct-loss font-mono;
+  }
+
+  .ct-neutral {
+    @apply text-ct-text-2 font-mono;
+  }
+
+  /* ---- Status badges ---- */
+  .ct-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .ct-badge-profit {
+    @apply ct-badge bg-ct-profit/10 text-ct-profit;
+  }
+
+  .ct-badge-loss {
+    @apply ct-badge bg-ct-loss/10 text-ct-loss;
+  }
+
+  .ct-badge-warning {
+    @apply ct-badge bg-ct-warning/10 text-ct-warning;
+  }
+
+  .ct-badge-info {
+    @apply ct-badge bg-ct-info/10 text-ct-info;
+  }
+
+  .ct-badge-neutral {
+    @apply ct-badge bg-ct-text-3/20 text-ct-text-2;
+  }
+
+  /* ---- Sidebar nav item ---- */
+  .ct-nav-item {
+    @apply relative flex items-center gap-3 px-3 py-2.5 rounded-lg
+           text-ct-text-2 text-sm font-medium
+           transition-all duration-150
+           hover:bg-ct-border hover:text-ct-text;
+  }
+
+  .ct-nav-item.active {
+    @apply text-ct-accent bg-ct-accent-dim;
+  }
+
+  /* Active left border indicator */
+  .ct-nav-item.active::before {
+    content: "";
+    @apply absolute left-0 top-1/2 -translate-y-1/2
+           w-0.5 h-5 bg-ct-accent rounded-full;
+  }
+
+  /* ---- Page section label ---- */
+  .ct-section-label {
+    @apply text-2xs font-semibold tracking-widest uppercase text-ct-text-3;
+  }
+
+  /* ---- Divider ---- */
+  .ct-divider {
+    @apply border-t border-ct-border;
+  }
+
+  /* ---- Input override — dark themed ---- */
+  .ct-input {
+    @apply w-full px-3 py-2.5
+           bg-ct-surface border border-ct-border rounded-lg
+           text-ct-text text-sm placeholder:text-ct-text-3
+           focus:outline-none focus:border-ct-accent
+           transition-colors duration-150;
+  }
+
+  /* ---- Primary button ---- */
+  .ct-btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           px-4 py-2.5 rounded-lg
+           bg-ct-accent text-ct-bg
+           text-sm font-semibold
+           transition-all duration-150
+           hover:bg-ct-accent/90 hover:scale-[1.01]
+           active:scale-[0.99]
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100;
+  }
+
+  /* ---- Secondary button ---- */
+  .ct-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           px-4 py-2.5 rounded-lg
+           bg-transparent border border-ct-border text-ct-text-2
+           text-sm font-medium
+           transition-all duration-150
+           hover:border-ct-accent hover:text-ct-text
+           disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  /* ---- Danger button ---- */
+  .ct-btn-danger {
+    @apply inline-flex items-center justify-center gap-2
+           px-4 py-2.5 rounded-lg
+           bg-transparent border border-ct-loss/40 text-ct-loss
+           text-sm font-medium
+           transition-all duration-150
+           hover:bg-ct-loss hover:text-white hover:border-ct-loss
+           disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  /* ---- Cooldown banner ---- */
+  .ct-cooldown-banner {
+    @apply w-full px-4 py-3
+           bg-ct-warning/10 border border-ct-warning/20
+           rounded-xl flex items-center gap-3;
+  }
+
+  /* ---- Table styles ---- */
+  .ct-table {
+    @apply w-full text-sm;
+  }
+
+  .ct-table th {
+    @apply px-4 py-3 text-left text-ct-text-3 font-medium text-xs tracking-wider uppercase;
+  }
+
+  .ct-table td {
+    @apply px-4 py-3 text-ct-text-2 border-t border-ct-border/50;
+  }
+
+  .ct-table tr:hover td {
+    @apply bg-ct-border/20 text-ct-text;
+  }
+
+  /* ---- Modal overlay ---- */
+  .ct-modal-overlay {
+    @apply fixed inset-0 z-50
+           bg-black/70 backdrop-blur-sm
+           flex items-center justify-center p-4;
+  }
+
+  .ct-modal {
+    @apply bg-ct-surface2 border border-ct-border rounded-2xl
+           shadow-2xl w-full max-w-md;
+  }
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
+/* ============================================================
+   Utility overrides
+   ============================================================ */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  /* Number formatting helpers */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
 }

@@ -9,9 +9,9 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0A0A0B] text-[#F9FAFB] flex items-center justify-center">
-      <p>Co‑Trader — API connection test. Open console to verify.</p>
-    </div>
+   <>
+   
+   </>
   );
 }
 
