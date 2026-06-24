@@ -1,5 +1,17 @@
-import { create } from 'zustand';
-import apiClient from '../lib/axios';
+import { create } from "zustand";
+import apiClient from "../lib/axios";
+
+const useMockAuth = import.meta.env.VITE_USE_MOCK_AUTH === "true";
+const mockToken = "mock-auth-token";
+
+const buildMockUser = ({ name, email }) => ({
+  id: "mock-user-id",
+  name,
+  email,
+  timezone: "UTC",
+  avatar_url: null,
+  onboarding_completed_at: null,
+});
 
 /**
  * useAuthStore
@@ -11,13 +23,12 @@ import apiClient from '../lib/axios';
  *  - login(), register(), logout(), and initAuth() actions
  */
 const useAuthStore = create((set, get) => ({
-
   /* ---- State ---- */
-  user:          null,     // { id, name, email, onboarding_completed_at, ... }
-  token:         localStorage.getItem('ct_token') || null,
-  isLoading:     false,    // true while an auth API call is in flight
-  error:         null,     // string error message or null
-  isInitialized: false,    // true once we've checked localStorage on app boot
+  user: null, // { id, name, email, onboarding_completed_at, ... }
+  token: localStorage.getItem("ct_token") || null,
+  isLoading: false, // true while an auth API call is in flight
+  error: null, // string error message or null
+  isInitialized: false, // true once we've checked localStorage on app boot
 
   /* ---- Actions ---- */
 
@@ -28,15 +39,25 @@ const useAuthStore = create((set, get) => ({
    * to confirm the token is still valid. If not, clear everything.
    */
   initAuth: async () => {
-    const token = localStorage.getItem('ct_token');
+    const token = localStorage.getItem("ct_token");
 
     if (!token) {
       set({ isInitialized: true });
       return;
     }
 
+    if (useMockAuth) {
+      const storedUser = localStorage.getItem("ct_user");
+      set({
+        user: storedUser ? JSON.parse(storedUser) : null,
+        token,
+        isInitialized: true,
+      });
+      return;
+    }
+
     try {
-      const response = await apiClient.get('/auth/user');
+      const response = await apiClient.get("/auth/user");
       const user = response.data.data;
 
       set({
@@ -46,12 +67,11 @@ const useAuthStore = create((set, get) => ({
       });
 
       // Keep localStorage in sync
-      localStorage.setItem('ct_user', JSON.stringify(user));
-
+      localStorage.setItem("ct_user", JSON.stringify(user));
     } catch {
       // Token is invalid or expired — clear it
-      localStorage.removeItem('ct_token');
-      localStorage.removeItem('ct_user');
+      localStorage.removeItem("ct_token");
+      localStorage.removeItem("ct_user");
       set({ user: null, token: null, isInitialized: true });
     }
   },
@@ -65,19 +85,27 @@ const useAuthStore = create((set, get) => ({
   login: async ({ email, password }) => {
     set({ isLoading: true, error: null });
 
+    if (useMockAuth) {
+      const user = buildMockUser({ name: email.split("@")[0], email });
+      localStorage.setItem("ct_token", mockToken);
+      localStorage.setItem("ct_user", JSON.stringify(user));
+
+      set({ user, token: mockToken, isLoading: false, error: null });
+      return { success: true, user };
+    }
+
     try {
-      const response = await apiClient.post('/auth/login', { email, password });
+      const response = await apiClient.post("/auth/login", { email, password });
       const { token, user } = response.data.data;
 
-      localStorage.setItem('ct_token', token);
-      localStorage.setItem('ct_user', JSON.stringify(user));
+      localStorage.setItem("ct_token", token);
+      localStorage.setItem("ct_user", JSON.stringify(user));
 
       set({ user, token, isLoading: false, error: null });
       return { success: true, user };
-
     } catch (err) {
       const message =
-        err.response?.data?.message || 'Login failed. Please try again.';
+        err.response?.data?.message || "Login failed. Please try again.";
       set({ isLoading: false, error: message });
       return { success: false, message };
     }
@@ -91,8 +119,17 @@ const useAuthStore = create((set, get) => ({
   register: async ({ name, email, password, password_confirmation }) => {
     set({ isLoading: true, error: null });
 
+    if (useMockAuth) {
+      const user = buildMockUser({ name, email });
+      localStorage.setItem("ct_token", mockToken);
+      localStorage.setItem("ct_user", JSON.stringify(user));
+
+      set({ user, token: mockToken, isLoading: false, error: null });
+      return { success: true, user };
+    }
+
     try {
-      const response = await apiClient.post('/auth/register', {
+      const response = await apiClient.post("/auth/register", {
         name,
         email,
         password,
@@ -100,18 +137,17 @@ const useAuthStore = create((set, get) => ({
       });
       const { token, user } = response.data.data;
 
-      localStorage.setItem('ct_token', token);
-      localStorage.setItem('ct_user', JSON.stringify(user));
+      localStorage.setItem("ct_token", token);
+      localStorage.setItem("ct_user", JSON.stringify(user));
 
       set({ user, token, isLoading: false, error: null });
       return { success: true, user };
-
     } catch (err) {
       // Laravel returns validation errors as { errors: { field: ['msg'] } }
-      const errors  = err.response?.data?.errors;
+      const errors = err.response?.data?.errors;
       const message = errors
-        ? Object.values(errors).flat()[0]     // first validation error message
-        : err.response?.data?.message || 'Registration failed.';
+        ? Object.values(errors).flat()[0] // first validation error message
+        : err.response?.data?.message || "Registration failed.";
 
       set({ isLoading: false, error: message });
       return { success: false, message };
@@ -124,15 +160,17 @@ const useAuthStore = create((set, get) => ({
    * then clears all local state and storage.
    */
   logout: async () => {
-    try {
-      await apiClient.post('/auth/logout');
-    } catch {
-      // Even if the API call fails, clear local state anyway
-    } finally {
-      localStorage.removeItem('ct_token');
-      localStorage.removeItem('ct_user');
-      set({ user: null, token: null, error: null });
+    if (!useMockAuth) {
+      try {
+        await apiClient.post("/auth/logout");
+      } catch {
+        // Even if the API call fails, clear local state anyway
+      }
     }
+
+    localStorage.removeItem("ct_token");
+    localStorage.removeItem("ct_user");
+    set({ user: null, token: null, error: null });
   },
 
   /**
@@ -146,7 +184,7 @@ const useAuthStore = create((set, get) => ({
    * Used to update user data after profile edits or onboarding completion
    */
   setUser: (user) => {
-    localStorage.setItem('ct_user', JSON.stringify(user));
+    localStorage.setItem("ct_user", JSON.stringify(user));
     set({ user });
   },
 }));
