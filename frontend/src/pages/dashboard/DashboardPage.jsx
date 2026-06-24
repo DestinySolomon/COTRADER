@@ -1,9 +1,16 @@
-import { TrendingUp, TrendingDown, Wallet, Bell, ShieldAlert, CircleDot } from 'lucide-react';
+import {
+  TrendingUp,
+  TrendingDown,
+  Wallet,
+  Bell,
+  ShieldAlert,
+  CircleDot,
+} from "lucide-react";
 
 /* ============================================================
    Skeleton block — animated shimmer placeholder
    ============================================================ */
-function Skeleton({ className = '' }) {
+function Skeleton({ className = "" }) {
   return <div className={`ct-skeleton ${className}`} />;
 }
 
@@ -17,16 +24,24 @@ function Skeleton({ className = '' }) {
      icon      node     — Lucide icon component
      loading   bool
    ============================================================ */
-function StatCard({ label, value, change, positive, icon: Icon, loading = false }) {
+function StatCard({
+  label,
+  value,
+  change,
+  positive,
+  icon: Icon,
+  loading = false,
+}) {
   return (
     <div className="ct-card p-5 flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <span className="text-ct-text-2 text-sm font-medium">{label}</span>
         <div className="w-9 h-9 rounded-lg bg-ct-surface2 flex items-center justify-center">
-          {loading
-            ? <Skeleton className="w-5 h-5" />
-            : <Icon size={16} strokeWidth={1.5} className="text-ct-text-3" />
-          }
+          {loading ? (
+            <Skeleton className="w-5 h-5" />
+          ) : (
+            <Icon size={16} strokeWidth={1.5} className="text-ct-text-3" />
+          )}
         </div>
       </div>
 
@@ -41,11 +56,15 @@ function StatCard({ label, value, change, positive, icon: Icon, loading = false 
             {value}
           </p>
           {change && (
-            <p className={`text-xs font-mono mt-1 ${
-              positive === true  ? 'text-ct-profit' :
-              positive === false ? 'text-ct-loss'   :
-                                   'text-ct-text-3'
-            }`}>
+            <p
+              className={`text-xs font-mono mt-1 ${
+                positive === true
+                  ? "text-ct-profit"
+                  : positive === false
+                    ? "text-ct-loss"
+                    : "text-ct-text-3"
+              }`}
+            >
               {change}
             </p>
           )}
@@ -85,7 +104,11 @@ function OpenTradesWidget({ loading = true }) {
         /* Empty state — shown when no trades yet */
         <div className="flex flex-col items-center justify-center py-16 gap-3">
           <div className="w-12 h-12 rounded-full bg-ct-surface2 flex items-center justify-center">
-            <TrendingUp size={20} className="text-ct-text-3" strokeWidth={1.5} />
+            <TrendingUp
+              size={20}
+              className="text-ct-text-3"
+              strokeWidth={1.5}
+            />
           </div>
           <div className="text-center">
             <p className="text-ct-text text-sm font-medium">No open trades</p>
@@ -133,7 +156,9 @@ function ActiveAlertsWidget({ loading = true }) {
           <Bell size={20} className="text-ct-text-3" strokeWidth={1.5} />
           <div className="text-center">
             <p className="text-ct-text text-sm font-medium">No active alerts</p>
-            <p className="text-ct-text-3 text-xs mt-1">Set a price target to get notified</p>
+            <p className="text-ct-text-3 text-xs mt-1">
+              Set a price target to get notified
+            </p>
           </div>
         </div>
       )}
@@ -149,7 +174,11 @@ function NewsWidget({ loading = true }) {
     <div className="ct-card">
       <div className="flex items-center justify-between px-5 py-4 border-b border-ct-border">
         <div className="flex items-center gap-2">
-          <ShieldAlert size={14} className="text-ct-warning" strokeWidth={1.5} />
+          <ShieldAlert
+            size={14}
+            className="text-ct-warning"
+            strokeWidth={1.5}
+          />
           <h3 className="text-ct-text font-semibold text-sm">Upcoming News</h3>
         </div>
         <span className="ct-badge-warning">Next 24h</span>
@@ -172,8 +201,12 @@ function NewsWidget({ loading = true }) {
         <div className="flex flex-col items-center justify-center py-12 gap-3">
           <ShieldAlert size={20} className="text-ct-text-3" strokeWidth={1.5} />
           <div className="text-center">
-            <p className="text-ct-text text-sm font-medium">No high-impact events</p>
-            <p className="text-ct-text-3 text-xs mt-1">Markets are quiet for now</p>
+            <p className="text-ct-text text-sm font-medium">
+              No high-impact events
+            </p>
+            <p className="text-ct-text-3 text-xs mt-1">
+              Markets are quiet for now
+            </p>
           </div>
         </div>
       )}
@@ -190,7 +223,6 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-
       {/* ---- Top stat cards ---- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatCard
@@ -228,18 +260,20 @@ export default function DashboardPage() {
       </div>
 
       {/* ---- No account banner ---- */}
-      <div className="flex items-start gap-4 p-4 rounded-xl bg-ct-accent/5 border border-ct-accent/20">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-xl bg-ct-accent/5 border border-ct-accent/20">
         <div className="w-9 h-9 rounded-lg bg-ct-accent/10 flex items-center justify-center shrink-0 mt-0.5">
           <Wallet size={16} className="text-ct-accent" strokeWidth={1.5} />
         </div>
-        <div className="flex-1">
-          <p className="text-ct-text text-sm font-semibold">Connect your first account</p>
+        <div className="flex-1 min-w-0">
+          <p className="text-ct-text text-sm font-semibold">
+            Connect your first account
+          </p>
           <p className="text-ct-text-2 text-xs mt-1 leading-relaxed">
-            Link your MT5 broker or Binance account to start monitoring your trades,
-            enforcing your rules, and protecting your account.
+            Link your MT5 broker or Binance account to start monitoring your
+            trades, enforcing your rules, and protecting your account.
           </p>
         </div>
-        <button className="ct-btn-primary text-xs px-3 py-2 shrink-0">
+        <button className="ct-btn-primary text-xs px-3 py-2 shrink-0 w-full sm:w-auto">
           Connect account
         </button>
       </div>
@@ -254,7 +288,7 @@ export default function DashboardPage() {
         {/* Sidebar widgets */}
         <div className="flex flex-col gap-6">
           <ActiveAlertsWidget loading={isLoading} />
-          <NewsWidget         loading={isLoading} />
+          <NewsWidget loading={isLoading} />
         </div>
       </div>
     </div>
